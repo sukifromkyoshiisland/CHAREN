@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHARÉN | Çayın Dünyasını Keşfet</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #F7F4ED;
+            color: #263C30;
+            font-family: Georgia, serif;
+        }
+
+        header {
+            padding: 25px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #D9D5C9;
+        }
+
+        .logo {
+            font-size: 30px;
+            letter-spacing: 4px;
+            font-weight: bold;
+        }
+
+        nav a {
+            margin-left: 25px;
+            color: #263C30;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 110px 20px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 19px;
+            color: #657568;
+            max-width: 580px;
+            margin: 0 auto 35px;
+            line-height: 1.7;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #263C30;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .assistant-section {
+            max-width: 720px;
+            margin: 0 auto 90px;
+            padding: 0 20px;
+        }
+
+        .assistant-section h2 {
+            text-align: center;
+            font-size: 34px;
+            font-weight: normal;
+        }
+
+        .assistant-section > p {
+            text-align: center;
+            color: #657568;
+            line-height: 1.7;
+        }
+
+        .chat-box {
+            background: #FFFFFF;
+            border: 1px solid #D9D5C9;
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .user-message {
+            background: #E8EDE7;
+        }
+
+        .ai-message {
+            background: #F7F4ED;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-form input {
+            flex: 1;
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid #D9D5C9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .chat-form button {
+            background: #263C30;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 14px 20px;
+            cursor: pointer;
+        }
+
+        .chat-form button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 13px;
+            color: #657568;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav {
+                text-align: center;
+                line-height: 2.5;
+            }
+
+            nav a {
+                margin: 0 8px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">CHARÉN</div>
+
+        <nav>
+            <a href="#kesfet">Keşfet</a>
+            <a href="#ogren">Öğren</a>
+            <a href="#demle">Demle</a>
+            <a href="#asistan">AI Tea Sommelier</a>
+        </nav>
+    </header>
+
+    <main class="hero">
+        <h1>Every Tea Has a Story.</h1>
+
+        <p>
+            Dünyanın nitelikli çaylarını keşfet.
+            Kökenlerini öğren, demleme tekniklerini deneyimle
+            ve sana en uygun çayı bul.
+        </p>
+
+        <a class="button" href="#asistan">Çayını Keşfet</a>
+    </main>
+
+    <section class="assistant-section" id="asistan">
+        <h2>AI Tea Sommelier</h2>
+
+        <p>
+            Nasıl bir çay arıyorsun?
+            Damak zevkini anlat, sana uygun çayları birlikte keşfedelim.
+        </p>
+
+        <div class="chat-box">
+            <div class="chat-messages" id="chatMessages" aria-live="polite">
+                <div class="message ai-message">
+                    Merhaba! Ben CHARÉN'in çay asistanıyım.
+                    Bugün nasıl bir çay keşfetmek istersin?
+                </div>
+            </div>
+
+            <form class="chat-form" id="chatForm">
+                <input
+                    type="text"
+                    id="chatInput"
+                    placeholder="Örneğin: Yumuşak içimli bir Çin çayı arıyorum..."
+                    maxlength="2000"
+                    required
+                >
+
+                <button type="submit" id="sendButton">
+                    Gönder
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        © 2026 CHARÉN — Discover the world of tea.
+    </footer>
+
+    <script>
+        const chatForm = document.getElementById("chatForm");
+        const chatInput = document.getElementById("chatInput");
+        const chatMessages = document.getElementById("chatMessages");
+        const sendButton = document.getElementById("sendButton");
+
+        function addMessage(text, type) {
+            const message = document.createElement("div");
+
+            message.className = "message " + type;
+            message.textContent = text;
+
+            chatMessages.appendChild(message);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatForm.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const mesaj = chatInput.value.trim();
+
+            if (!mesaj) {
+                return;
+            }
+
+            addMessage(mesaj, "user-message");
+
+            chatInput.value = "";
+            sendButton.disabled = true;
+            sendButton.textContent = "Bekleyin...";
+
+            try {
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        mesaj: mesaj
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || "Bir hata oluştu."
+                    );
+                }
+
+                addMessage(data.yanit, "ai-message");
+
+            } catch (error) {
+                addMessage(
+                    error.message || "Asistana ulaşılamıyor.",
+                    "ai-message"
+                );
+
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = "Gönder";
+                chatInput.focus();
+            }
+        });
+    </script>
+
+</body>
+</html>
