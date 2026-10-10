@@ -65,7 +65,7 @@ def chat():
         })
 
         # Oturumu küçük tutmak için son 10 mesajı sakla
-        session["sohbet_gecmisi"] = gecmis[-10:]
+        # session["sohbet_gecmisi"] = gecmis[-10:]
 
         return jsonify({
             "yanit": yanit
