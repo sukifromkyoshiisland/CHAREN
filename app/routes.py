@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, session
 
 from app.database import tum_leadler
 from app.services.ai_service import ai_service, AIServiceError
@@ -43,8 +43,29 @@ def chat():
             "error": "Mesaj çok uzun."
         }), 400
 
+    # Önceki konuşmaları al
+    gecmis = session.get("sohbet_gecmisi", [])
+
     try:
-        yanit = ai_service.yanit_uret(mesaj)
+        # Yapay zekâya geçmiş konuşmaları da gönder
+        yanit = ai_service.yanit_uret(
+            mesaj,
+            gecmis=gecmis
+        )
+
+        # Yeni mesajları geçmişe ekle
+        gecmis.append({
+            "role": "user",
+            "content": mesaj
+        })
+
+        gecmis.append({
+            "role": "assistant",
+            "content": yanit
+        })
+
+        # Oturumu küçük tutmak için son 10 mesajı sakla
+        session["sohbet_gecmisi"] = gecmis[-10:]
 
         return jsonify({
             "yanit": yanit
