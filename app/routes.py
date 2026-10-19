@@ -1,3 +1,4 @@
+
 from flask import Blueprint, render_template, request, jsonify, session
 
 from app.database import tum_leadler
@@ -11,6 +12,12 @@ main = Blueprint("main", __name__)
 @main.route("/")
 def home():
     return render_template("index.html")
+
+
+# WIX İÇİN SADECE CHATBOT ARAYÜZÜ
+@main.route("/chat-widget")
+def chat_widget():
+    return render_template("chat_widget.html")
 
 
 # YÖNETİM PANELİ
@@ -47,13 +54,13 @@ def chat():
     gecmis = session.get("sohbet_gecmisi", [])
 
     try:
-        # Yapay zekâya geçmiş konuşmaları da gönder
+        # AI'a önceki mesajlarla birlikte soruyu gönder
         yanit = ai_service.yanit_uret(
             mesaj,
             gecmis=gecmis
         )
 
-        # Yeni mesajları geçmişe ekle
+        # Yeni mesajları konuşma geçmişine ekle
         gecmis.append({
             "role": "user",
             "content": mesaj
@@ -64,8 +71,8 @@ def chat():
             "content": yanit
         })
 
-        # Oturumu küçük tutmak için son 10 mesajı sakla
-        # session["sohbet_gecmisi"] = gecmis[-10:]
+        # Son 10 mesajı sakla
+        session["sohbet_gecmisi"] = gecmis[-10:]
 
         return jsonify({
             "yanit": yanit
