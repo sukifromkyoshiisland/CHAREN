@@ -134,7 +134,7 @@
       const loading = addMessage("Yazıyor...", "assistant");
 
       try {
-        const response = await fetch("/api/chat", {
+        const response = await fetch("https://charen.onrender.com/api/chat", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
