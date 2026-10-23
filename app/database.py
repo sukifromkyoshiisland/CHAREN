@@ -1,6 +1,6 @@
-
 import sqlite3
 from flask import current_app
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # DATABASE CONNECTION
@@ -43,6 +43,16 @@ def init_db(app):
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     email TEXT NOT NULL UNIQUE,
                     status TEXT NOT NULL DEFAULT 'Active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+            # ADMIN USERS
+            db.execute("""
+                CREATE TABLE IF NOT EXISTS admins (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    email TEXT NOT NULL UNIQUE,
+                    password_hash TEXT NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
@@ -132,3 +142,38 @@ def dashboard_istatistikleri():
         "totalMessages": total_messages,
         "totalSubscribers": total_subscribers
     }
+
+
+# ADMIN AUTHENTICATION
+def admin_ekle(email, password):
+    password_hash = generate_password_hash(password)
+
+    with get_db() as db:
+        cursor = db.execute(
+            """
+            INSERT INTO admins (email, password_hash)
+            VALUES (?, ?)
+            """,
+            (email.strip().lower(), password_hash)
+        )
+        return cursor.lastrowid
+
+
+def admin_dogrula(email, password):
+    with get_db() as db:
+        admin = db.execute(
+            """
+            SELECT id, email, password_hash
+            FROM admins
+            WHERE email = ?
+            """,
+            (email.strip().lower(),)
+        ).fetchone()
+
+    if admin and check_password_hash(admin["password_hash"], password):
+        return {
+            "id": admin["id"],
+            "email": admin["email"]
+        }
+
+    return None
